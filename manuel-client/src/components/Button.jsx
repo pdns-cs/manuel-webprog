@@ -8,9 +8,12 @@ const variantClasses = {
 const Button = ({
   children,
   to,
+  href,
   type = 'button',
   variant = 'secondary',
   className = '',
+  target,
+  rel,
 }) => {
   const classes = [
     'inline-flex items-center justify-center rounded-full border-2 border-zinc-900 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition',
@@ -25,6 +28,14 @@ const Button = ({
       <Link to={to} className={classes}>
         {children}
       </Link>
+    );
+  }
+
+  if (href) {
+    return (
+      <a href={href} className={classes} target={target} rel={rel}>
+        {children}
+      </a>
     );
   }
 

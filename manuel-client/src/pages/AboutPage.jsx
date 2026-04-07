@@ -1,4 +1,4 @@
-import aboutDinoImage from '../assets/about-dino.png';
+import aboutDinoImage from '../assets/about.png';
 import previewOneImage from '../assets/1.png';
 import previewTwoImage from '../assets/2.png';
 import previewThreeImage from '../assets/3.png';
@@ -14,7 +14,7 @@ const AboutPage = () => {
             <img
               src={aboutDinoImage}
               alt="Dinosaurs for the About page hero section"
-              className="h-full min-h-72 w-full max-w-2xl rounded-[2rem] object-contain lg:scale-115"
+              className="h-full min-h-56 w-full max-w-md rounded-[2rem] object-contain"
             />
           </div>
 

@@ -1,11 +1,11 @@
 import heroImage from '../assets/hero.png';
 import grassImage from '../assets/grass.png';
-import theropodsImage from '../assets/theropods.png';
-import sauropodsImage from '../assets/sauropods.png';
-import ceratopsianImage from '../assets/ceratopsian.png';
-import Button from '../components/button';
+import articles from '../assets/article-content';
+import Button from '../components/Button';
 
 const HomePage = () => {
+  const featuredArticles = articles.slice(0, 3);
+
   return (
     <div className="flex w-full flex-col">
       {/* Hero Section */}
@@ -98,100 +98,42 @@ const HomePage = () => {
         <section className="bg-[#25754A] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-6">
             <h2 className="font-adigiana mt-2 text-2xl font-semibold text-[#F7F8EF]">
-            Meet the Dino Types
+            Featured Dino Articles
             </h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-            {/* Card 1 */}
-            <article className="rounded-3xl border-2 border-[#FAEDCB] bg-[#257572] p-4">
-            <div className="overflow-hidden rounded-[1.25rem] bg-zinc-200">
+          {featuredArticles.map((article) => (
+            <article
+              key={article.name}
+              className="flex h-full flex-col rounded-3xl bg-[#257572] p-4"
+            >
+              <div className="overflow-hidden rounded-[1.25rem] bg-zinc-200">
                 <img
-                  src={theropodsImage}
-                  alt="Theropods dinosaurs"
+                  src={article.image}
+                  alt={article.imageAlt}
                   className="aspect-[4/3] w-full object-cover"
                 />
-            </div>
+              </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-[#F7F8EF]">
-                Theropods
-            </h3>
+              <h3 className="mt-4 min-h-[5.5rem] text-lg font-semibold text-[#F7F8EF]">
+                {article.title}
+              </h3>
 
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Meat-Eating Dinosaurs
-            </p>
+              <p className="mt-3 min-h-[8.5rem] text-sm leading-6 text-[#F7F8EF]">
+                {article.content[0].substring(0, 150)}
+                {article.content[0].length > 150 ? '...' : ''}
+              </p>
 
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Fast and fierce hunters that walked on two legs. Examples: T. rex, Velociraptor.
-            </p>
-
-            <Button
-              className="mt-4 !border-[#FAEDCB] !bg-[#FAEDCB] !text-[#1E5D3B] hover:!bg-[#f3dfad]"
-              variant="primary"
-            >
-                View More
-            </Button>
+              <Button
+                to={`/articles/${article.name}`}
+                className="mt-auto !border-[#FAEDCB] !bg-[#FAEDCB] !text-[#1E5D3B] hover:!bg-[#f3dfad]"
+                variant="primary"
+              >
+                Read More
+              </Button>
             </article>
-
-            {/* Card 2 */}
-            <article className="rounded-3xl border-2 border-[#FAEDCB] bg-[#257572] p-4">
-            <div className="overflow-hidden rounded-[1.25rem] bg-zinc-200">
-                <img
-                  src={sauropodsImage}
-                  alt="Sauropods dinosaurs"
-                  className="aspect-[4/3] w-full object-cover"
-                />
-            </div>
-
-            <h3 className="mt-4 text-lg font-semibold text-[#F7F8EF]">
-                Sauropods
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Long-Neck Giants
-            </p>
-
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Massive plant-eaters with long necks and tails. Examples: Brachiosaurus, Diplodocus.
-            </p>
-
-            <Button
-              className="mt-4 !border-[#FAEDCB] !bg-[#FAEDCB] !text-[#1E5D3B] hover:!bg-[#f3dfad]"
-              variant="primary"
-            >
-                View More
-            </Button>
-            </article>
-
-            {/* Card 3 */}
-            <article className="rounded-3xl border-2 border-[#FAEDCB] bg-[#257572] p-4">
-            <div className="overflow-hidden rounded-[1.25rem] bg-zinc-200">
-                <img
-                  src={ceratopsianImage}
-                  alt="Ceratopsian dinosaur"
-                  className="aspect-[4/3] w-full object-cover"
-                />
-            </div>
-
-            <h3 className="mt-4 text-lg font-semibold text-[#F7F8EF]">
-                Ceratopsians
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Horned Dinosaurs
-            </p>
-
-            <p className="mt-3 text-sm leading-6 text-[#F7F8EF]">
-                Plant-eaters with horns and frills for defense. Example: Triceratops.
-            </p>
-
-            <Button
-              className="mt-4 !border-[#FAEDCB] !bg-[#FAEDCB] !text-[#1E5D3B] hover:!bg-[#f3dfad]"
-              variant="primary"
-            >
-                View More
-            </Button>
-            </article>
+          ))}
         </div>
         </section>
         </div>
