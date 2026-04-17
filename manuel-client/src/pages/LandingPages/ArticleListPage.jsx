@@ -1,7 +1,7 @@
-import articleHeroImage from '../assets/article.png';
-import articles from '../assets/article-content';
-import ArticleList from '../components/ArticleList';
-import Button from '../components/Button';
+import articleHeroImage from '../../assets/article.png';
+import articles from '../../assets/article-content';
+import ArticleList from '../../components/ArticleList';
+import Button from '../../components/Button';
 
 const ArticleListPage = () => {
   return (

@@ -1,7 +1,7 @@
-import heroImage from '../assets/hero.png';
-import grassImage from '../assets/grass.png';
-import articles from '../assets/article-content';
-import Button from '../components/Button';
+import heroImage from '../../assets/hero.png';
+import grassImage from '../../assets/grass.png';
+import articles from '../../assets/article-content';
+import Button from '../../components/Button';
 
 const HomePage = () => {
   const featuredArticles = articles.slice(0, 3);

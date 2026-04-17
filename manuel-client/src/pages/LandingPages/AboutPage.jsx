@@ -1,9 +1,9 @@
-import aboutDinoImage from '../assets/about.png';
-import previewOneImage from '../assets/1.png';
-import previewTwoImage from '../assets/2.png';
-import previewThreeImage from '../assets/3.png';
-import previewFourImage from '../assets/4.png';
-import Button from '../components/button';
+import aboutDinoImage from '../../assets/about.png';
+import previewOneImage from '../../assets/1.png';
+import previewTwoImage from '../../assets/2.png';
+import previewThreeImage from '../../assets/3.png';
+import previewFourImage from '../../assets/4.png';
+import Button from '../../components/Button';
 
 const AboutPage = () => {
   return (

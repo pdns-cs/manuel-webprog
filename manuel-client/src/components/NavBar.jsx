@@ -18,7 +18,7 @@ const navLinkClassName = ({ isActive }) =>
 const NavBar = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-900/10 bg-[#F7F8EF]/95 shadow-[0_10px_35px_rgba(24,24,27,0.08)] backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <NavLink to="/" className="group flex items-center gap-3">
           <img
             src={dinoWorldLogo}
@@ -35,7 +35,7 @@ const NavBar = () => {
           </div>
         </NavLink>
 
-        <nav className="hidden items-center gap-2 md:flex">
+        <nav className="ml-auto hidden items-center gap-2 pr-28 md:flex lg:pr-32">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -47,6 +47,20 @@ const NavBar = () => {
             </NavLink>
           ))}
         </nav>
+
+        <NavLink
+          to="/sign-in"
+          className={({ isActive }) =>
+            [
+              'absolute -right-10 top-1/2 inline-flex -translate-y-1/2 shrink-0 items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] transition duration-200 sm:-right-12 lg:-right-16',
+              isActive
+                ? 'bg-[#25754A] text-white shadow-[0_10px_30px_rgba(37,117,74,0.28)]'
+                : 'bg-[#FAEDCB] text-[#1E5D3B] hover:bg-[#f3dfad]',
+            ].join(' ')
+          }
+        >
+          Sign In
+        </NavLink>
       </div>
     </header>
   );
