@@ -4,8 +4,8 @@ import signUpBackground from '../assets/signup.png';
 
 const AuthLayout = () => {
   const { pathname } = useLocation();
-  const isSignInPage = pathname === '/sign-in';
-  const isSignUpPage = pathname === '/sign-up';
+  const isSignInPage = pathname === '/auth/signin' || pathname === '/sign-in';
+  const isSignUpPage = pathname === '/auth/signup' || pathname === '/sign-up';
   const authBackground = isSignInPage
     ? signInBackground
     : isSignUpPage

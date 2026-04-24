@@ -1,61 +1,131 @@
 import { Link } from 'react-router-dom';
+import Button from '../../components/Button';
+
+const inputClasses =
+  'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
+
+const actionButtonClassName =
+  'w-full rounded-xl py-3 text-[11px] tracking-[0.2em]';
 
 const SignUpPage = () => {
   return (
-    <div className="rounded-[2rem] border-2 border-zinc-900/10 bg-white p-8 shadow-[0_20px_60px_rgba(24,24,27,0.08)]">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#CF842C]">
-        Join DinoWorld
-      </p>
-      <h1 className="mt-3 text-3xl font-bold text-zinc-900">Create your account</h1>
-      <p className="mt-4 text-sm leading-7 text-zinc-600">
-        Make a new account to start your dinosaur learning journey and keep track of your favorite
-        articles.
+    <>
+      <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+        Sign Up
+      </h1>
+
+      <p className="mt-3 text-sm leading-6 text-zinc-600">
+        Create your account with the same monochrome layout pattern and shared
+        button treatment.
       </p>
 
-      <form className="mt-8 space-y-4">
-        <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-zinc-800">Full Name</span>
-          <input
-            type="text"
-            placeholder="Your full name"
-            className="w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-[#CF842C] focus:bg-white"
-          />
-        </label>
+      <form className="mt-8 space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label
+              htmlFor="first-name"
+              className="text-sm font-medium text-zinc-700"
+            >
+              First Name
+            </label>
+            <input
+              id="first-name"
+              type="text"
+              placeholder="Placeholder"
+              autoComplete="given-name"
+              className={inputClasses}
+            />
+          </div>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-zinc-800">Email</span>
+          <div>
+            <label
+              htmlFor="last-name"
+              className="text-sm font-medium text-zinc-700"
+            >
+              Last Name
+            </label>
+            <input
+              id="last-name"
+              type="text"
+              placeholder="Placeholder"
+              autoComplete="family-name"
+              className={inputClasses}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="signup-email"
+            className="text-sm font-medium text-zinc-700"
+          >
+            Email
+          </label>
           <input
+            id="signup-email"
             type="email"
-            placeholder="you@example.com"
-            className="w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-[#CF842C] focus:bg-white"
+            placeholder="Placeholder"
+            autoComplete="email"
+            className={inputClasses}
           />
-        </label>
+        </div>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-zinc-800">Password</span>
+        <div>
+          <label
+            htmlFor="signup-password"
+            className="text-sm font-medium text-zinc-700"
+          >
+            Password
+          </label>
           <input
+            id="signup-password"
             type="password"
-            placeholder="Create a password"
-            className="w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-[#CF842C] focus:bg-white"
+            placeholder="Placeholder"
+            autoComplete="new-password"
+            className={inputClasses}
           />
-        </label>
+          <p className="mt-2 text-xs leading-5 text-zinc-500">
+            Use a secure password with letters, numbers, and symbols.
+          </p>
+        </div>
 
-        <button
+        <Button
           type="submit"
-          className="w-full rounded-full border-2 border-[#CF842C] bg-[#CF842C] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition hover:bg-[#b47124]"
+          variant="primary"
+          className={actionButtonClassName}
         >
-          Sign Up
-        </button>
+          Create Account
+        </Button>
+
+        <div className="grid gap-3 pt-2 sm:grid-cols-2">
+          <Button
+            type="button"
+            variant="secondary"
+            className={actionButtonClassName}
+          >
+            Sign Up with Google
+          </Button>
+
+          <Button
+            type="button"
+            variant="secondary"
+            className={actionButtonClassName}
+          >
+            Sign Up with Apple
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 text-sm text-zinc-600">
+      <div className="mt-8 border-t border-zinc-200 pt-6 text-sm text-zinc-600">
         Already have an account?{' '}
-        <Link to="/sign-in" className="font-semibold text-[#CF842C] hover:text-[#b47124]">
-          Go to sign in
+        <Link
+          to="/auth/signin"
+          className="font-semibold text-zinc-900 transition hover:text-zinc-600"
+        >
+          Log In
         </Link>
-        .
-      </p>
-    </div>
+      </div>
+    </>
   );
 };
 

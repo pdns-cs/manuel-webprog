@@ -49,7 +49,7 @@ const NavBar = () => {
         </nav>
 
         <NavLink
-          to="/sign-in"
+          to="/auth/signin"
           className={({ isActive }) =>
             [
               'absolute -right-10 top-1/2 inline-flex -translate-y-1/2 shrink-0 items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] transition duration-200 sm:-right-12 lg:-right-16',
