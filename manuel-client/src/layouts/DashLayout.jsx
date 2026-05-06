@@ -40,18 +40,18 @@ function DashLayout() {
         display: 'flex',
         height: '100%',
         flexDirection: 'column',
-        background: 'linear-gradient(180deg, #0f172a 0%, #172554 100%)',
-        color: '#e2e8f0',
+        background: 'linear-gradient(180deg, #1E5D3B 0%, #16452d 100%)',
+        color: '#F7F8EF',
       }}
     >
       <Box sx={{ px: 3, py: 3 }}>
-        <Typography variant="overline" sx={{ letterSpacing: '0.18em', color: '#93c5fd' }}>
+        <Typography variant="overline" sx={{ letterSpacing: '0.18em', color: '#FAEDCB' }}>
           Admin Panel
         </Typography>
         <Typography variant="h5" sx={{ fontWeight: 700 }}>
           Manuel Dashboard
         </Typography>
-        <Typography variant="body2" sx={{ mt: 1, color: '#cbd5e1' }}>
+        <Typography variant="body2" sx={{ mt: 1, color: 'rgba(247, 248, 239, 0.82)' }}>
           Access your overview, reports, and users from one place.
         </Typography>
       </Box>
@@ -69,21 +69,21 @@ function DashLayout() {
               onClick={() => setMobileOpen(false)}
               sx={{
                 mb: 1,
-                borderRadius: 3,
-                color: '#cbd5e1',
+                borderRadius: 2,
+                color: 'rgba(247, 248, 239, 0.82)',
                 '&.active': {
-                  backgroundColor: 'rgba(148, 163, 184, 0.18)',
-                  color: '#f8fafc',
+                  backgroundColor: 'rgba(250, 237, 203, 0.16)',
+                  color: '#F7F8EF',
                 },
                 '&.active .MuiListItemIcon-root': {
-                  color: '#bfdbfe',
+                  color: '#FAEDCB',
                 },
                 '&:hover': {
-                  backgroundColor: 'rgba(148, 163, 184, 0.12)',
+                  backgroundColor: 'rgba(250, 237, 203, 0.10)',
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 40, color: '#94a3b8' }}>
+              <ListItemIcon sx={{ minWidth: 40, color: 'rgba(250, 237, 203, 0.78)' }}>
                 <Icon />
               </ListItemIcon>
               <ListItemText primary={item.label} />
@@ -95,15 +95,15 @@ function DashLayout() {
       <Box sx={{ mt: 'auto', px: 3, py: 3 }}>
         <Box
           sx={{
-            borderRadius: 4,
-            backgroundColor: 'rgba(15, 23, 42, 0.5)',
+            borderRadius: 2,
+            backgroundColor: 'rgba(15, 23, 42, 0.18)',
             p: 2,
           }}
         >
           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
             Quick Access
           </Typography>
-          <Typography variant="body2" sx={{ mt: 0.5, color: '#cbd5e1' }}>
+          <Typography variant="body2" sx={{ mt: 0.5, color: 'rgba(247, 248, 239, 0.78)' }}>
             Use the sidebar to jump straight into your dashboard workspace.
           </Typography>
         </Box>
@@ -112,7 +112,7 @@ function DashLayout() {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#eef2ff' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F7F8EF' }}>
       <AppBar
         position="fixed"
         color="inherit"
@@ -120,8 +120,8 @@ function DashLayout() {
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-          backgroundColor: 'rgba(255, 255, 255, 0.78)',
+          borderBottom: '1px solid rgba(30, 93, 59, 0.12)',
+          backgroundColor: 'rgba(247, 248, 239, 0.86)',
           backdropFilter: 'blur(16px)',
         }}
       >
@@ -136,10 +136,10 @@ function DashLayout() {
               <MenuRoundedIcon />
             </IconButton>
             <Box>
-              <Typography variant="subtitle2" sx={{ color: '#4338ca', fontWeight: 700 }}>
+              <Typography variant="subtitle2" sx={{ color: '#1E5D3B', fontWeight: 700 }}>
                 Dashboard
               </Typography>
-              <Typography variant="h6" sx={{ color: '#0f172a', fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ color: '#1f2937', fontWeight: 700 }}>
                 Workspace Navigation
               </Typography>
             </Box>

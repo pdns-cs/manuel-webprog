@@ -4,7 +4,6 @@ import sauropodsImage from './sauropods.png';
 import ankylosaursImage from './ankylosaurs.png';
 import boneOneImage from './bone-1.png';
 import boneTwoImage from './bone-2.png';
-import ceratopsianImage from './ceratopsian.png';
 import timelineImage from './4.png';
 
 const articles = [
