@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Navigate, createBrowserRouter, RouterProvider, useLocation } from 'react-router-dom';
 
 // HomePage Structure
 import Layout from './layouts/Layout';
@@ -19,13 +19,34 @@ import ArticlesPage from './pages/DashboardPages/ArticlesPage';
 
 import NotFoundPage from './pages/NotFoundPage';
 
-const getCurrentUserType = () => localStorage.getItem('type');
+const dashboardRoles = ['admin', 'editor'];
 
-const RequireAuth = ({ children }) => {
-  const token = localStorage.getItem('token');
+const getCurrentUserType = () => sessionStorage.getItem('type');
+
+const clearStoredUser = () => {
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
+  sessionStorage.removeItem('type');
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('type');
+};
+
+const RequireAuth = ({ allowedRoles = [], children }) => {
+  const location = useLocation();
+  const token = sessionStorage.getItem('token');
+  const userType = getCurrentUserType();
 
   if (!token) {
-    return <Navigate to="/auth/signin" replace />;
+    clearStoredUser();
+
+    return <Navigate to="/auth/signin" replace state={{ from: location }} />;
+  }
+
+  if (allowedRoles.length && !allowedRoles.includes(userType)) {
+    clearStoredUser();
+
+    return <Navigate to="/auth/signin" replace state={{ from: location }} />;
   }
 
   return children;
@@ -95,7 +116,7 @@ const routes = [
   {
     path: 'dashboard',
     element: (
-      <RequireAuth>
+      <RequireAuth allowedRoles={dashboardRoles}>
         <DashLayout />
       </RequireAuth>
     ),

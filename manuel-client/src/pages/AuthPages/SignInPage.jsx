@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import { loginUser } from '../../services/UserService';
 
@@ -11,6 +11,8 @@ const actionButtonClassName =
 
 const SignInPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.from?.pathname || '/dashboard';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,11 +26,16 @@ const SignInPage = () => {
     try {
       const { data } = await loginUser({ email, password });
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('type', data.type);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('type');
 
-      navigate('/dashboard', {
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('type', data.type);
+
+      navigate(redirectTo, {
+        replace: true,
         state: {
           firstName: data.user?.firstName,
           type: data.type,

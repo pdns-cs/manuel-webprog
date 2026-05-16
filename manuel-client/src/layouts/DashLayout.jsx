@@ -3,10 +3,12 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import {
   AppBar,
   Box,
+  Button,
   Container,
   Drawer,
   IconButton,
@@ -18,7 +20,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 
 const drawerWidth = 280;
 
@@ -30,11 +32,23 @@ const navItems = [
 ];
 
 function DashLayout() {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const userType = localStorage.getItem('type');
+  const userType = sessionStorage.getItem('type');
 
   const handleDrawerToggle = () => {
     setMobileOpen((open) => !open);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('type');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('type');
+    setMobileOpen(false);
+    navigate('/auth/signin', { replace: true });
   };
 
   const drawerContent = (
@@ -98,6 +112,26 @@ function DashLayout() {
       </List>
 
       <Box sx={{ mt: 'auto', px: 3, py: 3 }}>
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={<LogoutRoundedIcon />}
+          onClick={handleLogout}
+          sx={{
+            mb: 2,
+            justifyContent: 'flex-start',
+            borderRadius: 2,
+            backgroundColor: '#FAEDCB',
+            color: '#1E5D3B',
+            fontWeight: 700,
+            '&:hover': {
+              backgroundColor: '#f3dfad',
+            },
+          }}
+        >
+          Logout
+        </Button>
+
         <Box
           sx={{
             borderRadius: 2,
@@ -149,6 +183,24 @@ function DashLayout() {
               </Typography>
             </Box>
           </Stack>
+
+          <Button
+            variant="outlined"
+            startIcon={<LogoutRoundedIcon />}
+            onClick={handleLogout}
+            sx={{
+              display: { xs: 'none', sm: 'inline-flex' },
+              borderColor: 'rgba(30, 93, 59, 0.35)',
+              color: '#1E5D3B',
+              fontWeight: 700,
+              '&:hover': {
+                borderColor: '#1E5D3B',
+                backgroundColor: 'rgba(30, 93, 59, 0.08)',
+              },
+            }}
+          >
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
 
