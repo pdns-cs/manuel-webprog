@@ -1,10 +1,40 @@
+import { useEffect, useState } from 'react';
 import heroImage from '../../assets/hero.png';
 import grassImage from '../../assets/grass.png';
-import articles from '../../assets/article-content';
+import articleHeroImage from '../../assets/article.png';
 import Button from '../../components/Button';
+import { fetchArticles } from '../../services/ArticleService';
+
+const normalizeArticle = (article) => ({
+  name: article.slug,
+  title: article.title,
+  image: articleHeroImage,
+  imageAlt: `Illustration for ${article.title}`,
+  content: article.paragraphs?.length ? article.paragraphs : [article.preview],
+});
 
 const HomePage = () => {
-  const featuredArticles = articles.slice(0, 3);
+  const [featuredArticles, setFeaturedArticles] = useState([]);
+
+  useEffect(() => {
+    const loadFeaturedArticles = async () => {
+      try {
+        const { data } = await fetchArticles();
+        const entries = Array.isArray(data) ? data : data?.articles || [];
+        setFeaturedArticles(
+          entries
+            .filter((article) => article.isActive)
+            .slice(0, 3)
+            .map(normalizeArticle),
+        );
+      } catch (error) {
+        console.error('Error loading featured articles:', error);
+        setFeaturedArticles([]);
+      }
+    };
+
+    loadFeaturedArticles();
+  }, []);
 
   return (
     <div className="flex w-full flex-col">
@@ -102,8 +132,9 @@ const HomePage = () => {
             </h2>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {featuredArticles.map((article) => (
+        {featuredArticles.length ? (
+          <div className="grid gap-4 md:grid-cols-3">
+            {featuredArticles.map((article) => (
             <article
               key={article.name}
               className="flex h-full flex-col rounded-3xl bg-[#257572] p-4"
@@ -133,8 +164,13 @@ const HomePage = () => {
                 Read More
               </Button>
             </article>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="rounded-3xl bg-[#257572] p-5 text-sm text-[#F7F8EF]">
+            No active featured articles are available yet.
+          </p>
+        )}
         </section>
         </div>
   );

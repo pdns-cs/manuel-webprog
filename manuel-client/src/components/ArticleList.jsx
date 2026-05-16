@@ -37,7 +37,7 @@ const ArticleList = ({ articles }) => {
           ? article.content.join(' ')
           : article.content;
         const style = cardStyles[colorOrder[index % colorOrder.length]];
-        const articlePath = index === 2 ? '/articles/not-found' : `/articles/${article.name}`;
+        const articlePath = `/articles/${article.name}`;
 
         return (
           <article

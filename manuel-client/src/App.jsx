@@ -15,8 +15,31 @@ import DashLayout from './layouts/DashLayout';
 import Dashboard from './pages/DashboardPages/Dashboard';
 import ReportsPage from './pages/DashboardPages/ReportsPage';
 import UsersPage from './pages/DashboardPages/UsersPage';
+import ArticlesPage from './pages/DashboardPages/ArticlesPage';
 
 import NotFoundPage from './pages/NotFoundPage';
+
+const getCurrentUserType = () => localStorage.getItem('type');
+
+const RequireAuth = ({ children }) => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return <Navigate to="/auth/signin" replace />;
+  }
+
+  return children;
+};
+
+const RequireRole = ({ allowedRoles, children }) => {
+  const userType = getCurrentUserType();
+
+  if (!allowedRoles.includes(userType)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
 
 const routes = [
   {
@@ -71,7 +94,11 @@ const routes = [
   },
   {
     path: 'dashboard',
-    element: <DashLayout />,
+    element: (
+      <RequireAuth>
+        <DashLayout />
+      </RequireAuth>
+    ),
     errorElement: <NotFoundPage />,
     children: [
       {
@@ -84,7 +111,15 @@ const routes = [
       },
       {
         path: 'users',
-        element: <UsersPage />,
+        element: (
+          <RequireRole allowedRoles={['admin']}>
+            <UsersPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'articles',
+        element: <ArticlesPage />,
       },
     ],
   },

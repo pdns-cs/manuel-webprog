@@ -1,14 +1,55 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import articles from '../../assets/article-content';
+import articleHeroImage from '../../assets/article.png';
 import Button from '../../components/Button';
+import { fetchArticleBySlug } from '../../services/ArticleService';
+
+const normalizeDashboardArticle = (article) => ({
+  name: article.slug,
+  title: article.title,
+  url: article.url,
+  image: articleHeroImage,
+  imageAlt: `Illustration for ${article.title}`,
+  content: article.paragraphs?.length ? article.paragraphs : [article.preview],
+});
 
 const ArticlePage = () => {
   const { name } = useParams();
-  const article = useMemo(
-    () => articles.find((entry) => entry.name === name),
-    [name]
-  );
+  const [article, setArticle] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadArticle = async () => {
+      setIsLoading(true);
+
+      try {
+        const { data } = await fetchArticleBySlug(name);
+
+        if (data?.isActive) {
+          setArticle(normalizeDashboardArticle(data));
+        } else {
+          setArticle(null);
+        }
+      } catch (error) {
+        console.error('Error loading article:', error);
+        setArticle(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArticle();
+  }, [name]);
+
+  if (isLoading) {
+    return (
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl rounded-[2rem] bg-[#e5e8cc] p-6 sm:p-8">
+          <p className="text-sm text-zinc-600">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!article) {
     return (

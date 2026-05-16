@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
@@ -25,7 +25,11 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
-import usersSeed from '../../assets/users.json';
+import {
+  createUser,
+  fetchUsers,
+  updateUser,
+} from '../../services/UserService';
 
 const roles = ['admin', 'editor', 'viewer'];
 const genders = ['male', 'female', 'other'];
@@ -47,8 +51,9 @@ const blankForm = {
 const labelize = (value) =>
   value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : '';
 
-const seedUsers = usersSeed.map((user, index) => ({
-  id: Number(user.id) || index + 1,
+const normalizeUser = (user, index) => ({
+  ...user,
+  id: user._id || user.id || index + 1,
   firstName: String(user.firstName ?? '').trim(),
   lastName: String(user.lastName ?? '').trim(),
   age: String(user.age ?? '').trim(),
@@ -64,16 +69,30 @@ const seedUsers = usersSeed.map((user, index) => ({
   password: String(user.password ?? ''),
   address: String(user.address ?? '').trim(),
   isActive: typeof user.isActive === 'boolean' ? user.isActive : true,
-}));
+});
+
+const getUsersFromResponse = (data) => {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (Array.isArray(data?.users)) {
+    return data.users;
+  }
+
+  return [];
+};
 
 function UsersPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [users, setUsers] = useState(seedUsers);
+  const [users, setUsers] = useState([]);
   const [modal, setModal] = useState({ open: false, id: null });
   const [form, setForm] = useState(blankForm);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [pageError, setPageError] = useState('');
   const [filters, setFilters] = useState({
     search: '',
     role: 'all',
@@ -81,13 +100,36 @@ function UsersPage() {
     status: 'all',
   });
 
+  const loadUsers = async () => {
+    setLoading(true);
+    setPageError('');
+
+    try {
+      const { data } = await fetchUsers();
+      setUsers(getUsersFromResponse(data).map(normalizeUser));
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setPageError(
+        error.response?.data?.message ||
+          error.message ||
+          'Unable to load users. Please check if the backend server is running.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
   const filteredUsers = useMemo(() => {
     const search = filters.search.trim().toLowerCase();
 
     return users.filter((user) => {
       const matchesSearch = search
         ? [user.firstName, user.lastName, user.email, user.username].some((value) =>
-            value.toLowerCase().includes(search),
+            String(value ?? '').toLowerCase().includes(search),
           )
         : true;
       const matchesRole = filters.role === 'all' || user.role === filters.role;
@@ -107,7 +149,7 @@ function UsersPage() {
 
   const openModal = (user) => {
     setModal({ open: true, id: user?.id ?? null });
-    setForm(user ? { ...blankForm, ...user } : blankForm);
+    setForm(user ? { ...blankForm, ...user, password: '' } : blankForm);
     setErrors({});
   };
 
@@ -146,7 +188,6 @@ function UsersPage() {
       ['email', 'Email'],
       ['role', 'Role'],
       ['username', 'Username'],
-      ['password', 'Password'],
       ['address', 'Address'],
     ].forEach(([key, label]) => {
       if (!String(form[key]).trim()) {
@@ -162,7 +203,11 @@ function UsersPage() {
       nextErrors.contactNumber = 'Contact number must be 11 digits.';
     }
 
-    if (!nextErrors.password && form.password.length < 8) {
+    if (!modal.id && !String(form.password).trim()) {
+      nextErrors.password = 'Password is required.';
+    }
+
+    if (!nextErrors.password && form.password && form.password.length < 8) {
       nextErrors.password = 'Password must be at least 8 characters.';
     }
 
@@ -191,7 +236,7 @@ function UsersPage() {
     return nextErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const nextErrors = validate();
 
@@ -209,32 +254,53 @@ function UsersPage() {
       email: form.email.trim().toLowerCase(),
       role: form.role.trim().toLowerCase(),
       username: form.username.trim().toLowerCase(),
-      password: form.password,
       address: form.address.trim(),
       isActive: form.isActive,
     };
 
-    setUsers((prev) =>
-      modal.id
-        ? prev.map((user) => (user.id === modal.id ? { ...user, ...nextUser } : user))
-        : [
-            ...prev,
-            {
-              id: prev.reduce((max, user) => Math.max(max, Number(user.id) || 0), 0) + 1,
-              ...nextUser,
-            },
-          ],
-    );
+    if (form.password) {
+      nextUser.password = form.password;
+    }
 
-    closeModal();
+    setLoading(true);
+    setPageError('');
+
+    try {
+      if (modal.id) {
+        await updateUser(modal.id, nextUser);
+      } else {
+        await createUser(nextUser);
+      }
+
+      await loadUsers();
+      closeModal();
+    } catch (error) {
+      console.error('Error saving user:', error);
+      setPageError(error.response?.data?.message || 'Unable to save user. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const toggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id ? { ...user, isActive: !user.isActive } : user,
-      ),
-    );
+  const toggleStatus = async (user) => {
+    setLoading(true);
+    setPageError('');
+
+    try {
+      const editableUser = { ...user };
+      delete editableUser.password;
+
+      await updateUser(user.id, {
+        ...editableUser,
+        isActive: !user.isActive,
+      });
+      await loadUsers();
+    } catch (error) {
+      console.error('Error toggling user status:', error);
+      setPageError(error.response?.data?.message || 'Unable to update user status.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fieldProps = (name, label, extra = {}) => ({
@@ -301,7 +367,8 @@ function UsersPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => toggleStatus(row.id)}
+            disabled={loading}
+            onClick={() => toggleStatus(row)}
             sx={{
               backgroundColor: row.isActive ? '#CF842C' : '#1E5D3B',
               '&:hover': {
@@ -359,6 +426,12 @@ function UsersPage() {
         }}
       >
         <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+          {pageError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {pageError}
+            </Alert>
+          )}
+
           <Grid container spacing={2} sx={{ mb: 2.5 }}>
             <Grid item xs={12} md={5}>
               <TextField
@@ -450,6 +523,7 @@ function UsersPage() {
               <DataGrid
                 rows={filteredUsers}
                 columns={columns}
+                loading={loading}
                 disableRowSelectionOnClick
                 pageSizeOptions={[5, 10]}
                 initialState={{
@@ -472,7 +546,9 @@ function UsersPage() {
               />
             </Box>
           ) : (
-            <Alert severity="info">No users found. Use Add User to create your first record.</Alert>
+            <Alert severity="info">
+              {loading ? 'Loading users...' : 'No users found. Use Add User to create your first record.'}
+            </Alert>
           )}
         </CardContent>
       </Card>
@@ -555,6 +631,7 @@ function UsersPage() {
             <Button
               type="submit"
               variant="contained"
+              disabled={loading}
               sx={{
                 backgroundColor: '#1E5D3B',
                 '&:hover': {
@@ -562,7 +639,7 @@ function UsersPage() {
                 },
               }}
             >
-              {modal.id ? 'Update User' : 'Save User'}
+              {loading ? 'Saving...' : modal.id ? 'Update User' : 'Save User'}
             </Button>
           </DialogActions>
         </Box>

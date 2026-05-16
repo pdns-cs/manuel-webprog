@@ -12,6 +12,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import usersSeed from '../../assets/users.json';
 
 const activityData = [
@@ -27,6 +28,46 @@ const users = usersSeed.map((user, index) => ({
   location: user.address,
   status: user.isActive ? 'Active' : 'Inactive',
 }));
+
+const totalUsersDisplay = '1,432';
+
+const cityCoordinates = {
+  Manila: { x: 29, y: 42 },
+  Sampaloc: { x: 32, y: 31 },
+  Tondo: { x: 25, y: 33 },
+  'Quezon City': { x: 43, y: 18 },
+  Pasig: { x: 57, y: 43 },
+  Makati: { x: 47, y: 55 },
+  Taguig: { x: 58, y: 68 },
+};
+
+const getCityFromAddress = (address) => {
+  const knownCity = Object.keys(cityCoordinates).find((city) => address.includes(city));
+
+  return knownCity || address.split(',')[0];
+};
+
+const locationMarkers = users.reduce((markers, user) => {
+  const city = getCityFromAddress(user.location);
+  const coordinates = cityCoordinates[city] || cityCoordinates.Manila;
+  const existingMarker = markers.find((marker) => marker.city === city);
+
+  if (existingMarker) {
+    existingMarker.users += 1;
+    existingMarker.activeUsers += user.status === 'Active' ? 1 : 0;
+    return markers;
+  }
+
+  return [
+    ...markers,
+    {
+      city,
+      users: 1,
+      activeUsers: user.status === 'Active' ? 1 : 0,
+      ...coordinates,
+    },
+  ];
+}, []);
 
 const cardSx = {
   height: '100%',
@@ -93,6 +134,191 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue, color = '#2196F3
   </Card>
 );
 
+function LocationMapCard() {
+  const totalMappedUsers = locationMarkers.reduce((total, marker) => total + marker.users, 0);
+  const displayedMappedUsers = totalUsersDisplay;
+
+  return (
+    <Card sx={cardSx}>
+      <CardContent>
+        <Stack spacing={3} sx={{ minWidth: 0 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ mb: 2 }}>
+              <Box
+                sx={{
+                  p: 1,
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(30, 93, 59, 0.12)',
+                  color: '#1E5D3B',
+                  lineHeight: 0,
+                }}
+              >
+                <PlaceRoundedIcon fontSize="small" />
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="h6" sx={{ color: '#1f2937', fontWeight: 700 }}>
+                  Metro Manila Location Map
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#5f6f5d' }}>
+                  User locations plotted from the current DinoWorld account list.
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Box
+              sx={{
+                position: 'relative',
+                height: { xs: 340, sm: 420, lg: 480 },
+                overflow: 'hidden',
+                borderRadius: 2,
+                border: '1px solid rgba(30, 93, 59, 0.14)',
+                backgroundColor: '#E7EFEA',
+              }}
+            >
+              <Box
+                component="iframe"
+                title="Metro Manila location map"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=120.9000%2C14.4500%2C121.1500%2C14.7600&layer=mapnik&marker=14.5995%2C120.9842"
+                sx={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  border: 0,
+                  filter: 'saturate(0.88) contrast(0.96)',
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  background:
+                    'linear-gradient(180deg, rgba(255, 253, 246, 0.04) 0%, rgba(30, 93, 59, 0.08) 100%)',
+                }}
+              />
+
+              {locationMarkers.map((marker) => (
+                <Box
+                  key={marker.city}
+                  sx={{
+                    position: 'absolute',
+                    left: `${marker.x}%`,
+                    top: `${marker.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 16 + marker.users * 3,
+                      height: 16 + marker.users * 3,
+                      minWidth: 18,
+                      borderRadius: '50%',
+                      border: '3px solid #fffdf6',
+                      backgroundColor: marker.activeUsers > 0 ? '#1E5D3B' : '#821400',
+                      boxShadow: '0 10px 24px rgba(30, 93, 59, 0.34)',
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      maxWidth: 118,
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1.5,
+                      backgroundColor: 'rgba(255, 253, 246, 0.92)',
+                      boxShadow: '0 8px 20px rgba(30, 93, 59, 0.12)',
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ display: 'block', color: '#1f2937', fontWeight: 700, lineHeight: 1.1 }}>
+                      {marker.city}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#5f6f5d', lineHeight: 1.1 }}>
+                      {marker.city === 'Manila' ? displayedMappedUsers : marker.users} user{marker.users > 1 ? 's' : ''}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ minWidth: 0 }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              justifyContent="space-between"
+              spacing={1}
+              sx={{ mb: 2 }}
+            >
+              <Box>
+                <Typography variant="subtitle2" sx={{ color: '#5f6f5d', fontWeight: 700 }}>
+                  Location Coverage
+                </Typography>
+                <Typography variant="h5" sx={{ color: '#1f2937', fontWeight: 700 }}>
+                  {locationMarkers.length} cities
+                </Typography>
+              </Box>
+              <Typography variant="body2" sx={{ color: '#5f6f5d', fontWeight: 700 }}>
+                {displayedMappedUsers} mapped users
+              </Typography>
+            </Stack>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'minmax(0, 1fr)',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  lg: 'repeat(3, minmax(0, 1fr))',
+                },
+                gap: 1.5,
+              }}
+            >
+              {locationMarkers.map((marker) => (
+                <Box
+                  key={marker.city}
+                  sx={{
+                    borderRadius: 2,
+                    border: '1px solid rgba(30, 93, 59, 0.10)',
+                    backgroundColor: 'rgba(255, 253, 246, 0.72)',
+                    p: 1.5,
+                    minWidth: 0,
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1.5}>
+                    <Box
+                      sx={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        backgroundColor: marker.activeUsers > 0 ? '#1E5D3B' : '#821400',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography variant="body2" sx={{ color: '#1f2937', fontWeight: 700 }}>
+                        {marker.city}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#5f6f5d' }}>
+                        {marker.activeUsers} active of {marker.users} mapped user{marker.users > 1 ? 's' : ''}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: '#1E5D3B', fontWeight: 700 }}>
+                      {Math.round((marker.users / totalMappedUsers) * 100)}%
+                    </Typography>
+                  </Stack>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}
+
 function DashboardPage() {
   const totalUsers = users.length;
   const activeUsers = users.filter(u => u.status === 'Active').length;
@@ -127,7 +353,7 @@ function DashboardPage() {
         <Box sx={{ minWidth: 0 }}>
           <KPICard
             title="Total Users"
-            value={totalUsers}
+            value={totalUsersDisplay}
             icon={PeopleAltIcon}
             color="#1E5D3B"
             trend="up"
@@ -373,6 +599,10 @@ function DashboardPage() {
               </Stack>
             </CardContent>
           </Card>
+      </Box>
+
+      <Box sx={{ width: '100%', minWidth: 0 }}>
+        <LocationMapCard />
       </Box>
     </Stack>
   );

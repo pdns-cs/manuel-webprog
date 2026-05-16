@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
+import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import {
@@ -24,11 +25,13 @@ const drawerWidth = 280;
 const navItems = [
   { label: 'Dashboard', to: '/dashboard', icon: DashboardRoundedIcon },
   { label: 'Reports', to: '/dashboard/reports', icon: DescriptionRoundedIcon },
-  { label: 'Users', to: '/dashboard/users', icon: GroupRoundedIcon },
+  { label: 'Articles', to: '/dashboard/articles', icon: ArticleRoundedIcon },
+  { label: 'Users', to: '/dashboard/users', icon: GroupRoundedIcon, roles: ['admin'] },
 ];
 
 function DashLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const userType = localStorage.getItem('type');
 
   const handleDrawerToggle = () => {
     setMobileOpen((open) => !open);
@@ -57,7 +60,9 @@ function DashLayout() {
       </Box>
 
       <List sx={{ px: 2 }}>
-        {navItems.map((item) => {
+        {navItems
+          .filter((item) => !item.roles || item.roles.includes(userType))
+          .map((item) => {
           const Icon = item.icon;
 
           return (

@@ -1,9 +1,46 @@
+import { useEffect, useState } from 'react';
 import articleHeroImage from '../../assets/article.png';
-import articles from '../../assets/article-content';
 import ArticleList from '../../components/ArticleList';
 import Button from '../../components/Button';
+import { fetchArticles } from '../../services/ArticleService';
+
+const normalizeDashboardArticle = (article) => ({
+  name: article.slug,
+  title: article.title,
+  url: article.url,
+  image: articleHeroImage,
+  imageAlt: `Illustration for ${article.title}`,
+  content: article.paragraphs?.length ? article.paragraphs : [article.preview],
+  isDashboardArticle: true,
+});
 
 const ArticleListPage = () => {
+  const [publicArticles, setPublicArticles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      setIsLoading(true);
+
+      try {
+        const { data } = await fetchArticles();
+        const entries = Array.isArray(data) ? data : data?.articles || [];
+        setPublicArticles(
+          entries
+            .filter((article) => article.isActive)
+            .map(normalizeDashboardArticle),
+        );
+      } catch (error) {
+        console.error('Error loading dashboard articles:', error);
+        setPublicArticles([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArticles();
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-6">
       <section className="mx-4 mt-4 rounded-[2rem] bg-[#1E5D3B] px-6 py-6 sm:mx-6 sm:px-8 sm:py-8 lg:mx-8 lg:px-12">
@@ -53,7 +90,17 @@ const ArticleListPage = () => {
           </h2>
         </div>
 
-        <ArticleList articles={articles} />
+        {isLoading ? (
+          <p className="rounded-3xl bg-[#e5e8cc] p-5 text-sm text-zinc-600">
+            Loading articles...
+          </p>
+        ) : publicArticles.length ? (
+          <ArticleList articles={publicArticles} />
+        ) : (
+          <p className="rounded-3xl bg-[#e5e8cc] p-5 text-sm text-zinc-600">
+            No active articles are available yet.
+          </p>
+        )}
       </section>
     </div>
   );
