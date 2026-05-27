@@ -1,6 +1,40 @@
 {
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
     "tailwindcss": "^4.2.2"
+  },
+  "name": "manuel-webprog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node manuel-server/index.js",
+    "dev": "nodemon manuel-server/index.js",
+    "server": "nodemon manuel-server/index.js",
+    "client": "npm --prefix manuel-client run dev",
+    "build": "npm --prefix manuel-client run build",
+    "lint": "npm --prefix manuel-client run lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pdns-cs/manuel-webprog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pdns-cs/manuel-webprog/issues"
+  },
+  "homepage": "https://github.com/pdns-cs/manuel-webprog#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
