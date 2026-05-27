@@ -56,4 +56,7 @@ if (require.main === module) {
   startServer();
 }
 
-module.exports = app;
+const handler = (req, res) => app(req, res);
+
+module.exports = handler;
+module.exports.default = handler;
