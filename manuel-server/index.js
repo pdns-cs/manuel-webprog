@@ -1,4 +1,7 @@
-require('dotenv').config();
+// Only load a local .env file if we are NOT running on Vercel production
+if (!process.env.VERCEL) {
+  require('dotenv').config();
+}
 
 const express = require('express');
 const cors = require('cors');
